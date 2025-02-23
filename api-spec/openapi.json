@@ -1,0 +1,813 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "glu-server",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/integrations/{user_id}": {
+      "get": {
+        "summary": "Get Integrations",
+        "operationId": "get_integrations_api_integrations__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserIntegrationListResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/integrations/{integration_id}": {
+      "get": {
+        "summary": "Get Integration",
+        "operationId": "get_integration_api_integrations__integration_id__get",
+        "parameters": [
+          {
+            "name": "integration_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Integration Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserIntegrationResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{user_id}/integrations": {
+      "post": {
+        "summary": "Create User Integration",
+        "operationId": "create_user_integration_api_users__user_id__integrations_post",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserIntegrationCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserIntegrationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/integrations/{user_id}/sync": {
+      "post": {
+        "summary": "Sync Integrations",
+        "operationId": "sync_integrations_api_integrations__user_id__sync_post",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserIntegrationListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "post": {
+        "summary": "Create User",
+        "operationId": "create_user_api_users_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{user_id}": {
+      "get": {
+        "summary": "Get User",
+        "operationId": "get_user_api_users__user_id__get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "description": "Internal Server Error"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "root"
+        ],
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthCheckResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthType": {
+        "type": "string",
+        "enum": [
+          "api_key",
+          "oauth",
+          "bearer",
+          "none"
+        ],
+        "title": "AuthType"
+      },
+      "DatabaseStatus": {
+        "properties": {
+          "connected": {
+            "type": "boolean",
+            "title": "Connected"
+          },
+          "info": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Info"
+          },
+          "async_": {
+            "type": "boolean",
+            "title": "Async",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "connected",
+          "info"
+        ],
+        "title": "DatabaseStatus"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail",
+            "description": "Error message"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code",
+            "description": "Error code"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ErrorResponse"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthCheckResponse": {
+        "properties": {
+          "database": {
+            "$ref": "#/components/schemas/DatabaseStatus"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "healthy": {
+            "type": "boolean",
+            "title": "Healthy"
+          }
+        },
+        "type": "object",
+        "required": [
+          "database",
+          "message",
+          "healthy"
+        ],
+        "title": "HealthCheckResponse"
+      },
+      "IntegrationCategory": {
+        "type": "string",
+        "enum": [
+          "code",
+          "tickets",
+          "email",
+          "storage",
+          "calendar",
+          "media",
+          "communication"
+        ],
+        "title": "IntegrationCategory"
+      },
+      "IntegrationResponse": {
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "deleted": {
+            "type": "boolean",
+            "title": "Deleted",
+            "default": false
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "Integration's unique identifier"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Name of the integration"
+          },
+          "clerk_name": {
+            "type": "string",
+            "title": "Clerk Name",
+            "description": "Clerk identifier for the integration"
+          },
+          "base_host": {
+            "type": "string",
+            "title": "Base Host",
+            "description": "Base URL for the integration API"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "Description of the integration"
+          },
+          "keywords": {
+            "type": "string",
+            "title": "Keywords",
+            "description": "Comma-separated keywords"
+          },
+          "category": {
+            "$ref": "#/components/schemas/IntegrationCategory",
+            "description": "Category of the integration"
+          },
+          "logo": {
+            "type": "string",
+            "title": "Logo",
+            "description": "S3 URL for the integration logo"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "description": "Version of the integration"
+          },
+          "schema": {
+            "type": "string",
+            "title": "Schema",
+            "description": "S3 URL for the integration schema"
+          },
+          "auth_type": {
+            "$ref": "#/components/schemas/AuthType",
+            "description": "Authentication type"
+          },
+          "spec": {
+            "type": "string",
+            "title": "Spec",
+            "description": "S3 URL for the integration specification"
+          }
+        },
+        "type": "object",
+        "required": [
+          "created_at",
+          "updated_at",
+          "id",
+          "name",
+          "clerk_name",
+          "base_host",
+          "description",
+          "keywords",
+          "category",
+          "logo",
+          "version",
+          "schema",
+          "auth_type",
+          "spec"
+        ],
+        "title": "IntegrationResponse"
+      },
+      "UserCreateRequest": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "User's full name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "description": "User's email address"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserRole"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "User's role in the system",
+            "default": "user"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "email"
+        ],
+        "title": "UserCreateRequest"
+      },
+      "UserIntegrationCreateRequest": {
+        "properties": {
+          "integration_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Integration Id",
+            "description": "UUID of the integration to connect"
+          },
+          "clerk_id": {
+            "type": "string",
+            "title": "Clerk Id",
+            "description": "Clerk identifier for the integration instance"
+          }
+        },
+        "type": "object",
+        "required": [
+          "integration_id",
+          "clerk_id"
+        ],
+        "title": "UserIntegrationCreateRequest"
+      },
+      "UserIntegrationListResponse": {
+        "properties": {
+          "user_integrations": {
+            "items": {
+              "$ref": "#/components/schemas/UserIntegrationResponse"
+            },
+            "type": "array",
+            "title": "User Integrations"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Total number of user integrations"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page",
+            "description": "Current page number"
+          },
+          "pages": {
+            "type": "integer",
+            "title": "Pages",
+            "description": "Total number of pages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_integrations",
+          "total",
+          "page",
+          "pages"
+        ],
+        "title": "UserIntegrationListResponse"
+      },
+      "UserIntegrationResponse": {
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "deleted": {
+            "type": "boolean",
+            "title": "Deleted",
+            "default": false
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id",
+            "description": "User integration's unique identifier"
+          },
+          "integration_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Integration Id",
+            "description": "Associated integration ID"
+          },
+          "clerk_id": {
+            "type": "string",
+            "title": "Clerk Id",
+            "description": "Clerk identifier for the integration instance"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "Associated user ID"
+          },
+          "integration": {
+            "$ref": "#/components/schemas/IntegrationResponse",
+            "description": "Integration details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "created_at",
+          "updated_at",
+          "id",
+          "integration_id",
+          "clerk_id",
+          "user_id",
+          "integration"
+        ],
+        "title": "UserIntegrationResponse"
+      },
+      "UserResponse": {
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "deleted": {
+            "type": "boolean",
+            "title": "Deleted",
+            "default": false
+          },
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "User's unique identifier"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "User's full name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "title": "Email",
+            "description": "User's email address"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole",
+            "description": "User's role in the system"
+          }
+        },
+        "type": "object",
+        "required": [
+          "created_at",
+          "updated_at",
+          "id",
+          "name",
+          "email",
+          "role"
+        ],
+        "title": "UserResponse"
+      },
+      "UserRole": {
+        "type": "string",
+        "enum": [
+          "admin",
+          "premium",
+          "user"
+        ],
+        "title": "UserRole"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
