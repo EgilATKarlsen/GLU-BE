@@ -94,13 +94,23 @@ class UserIntegration(UserIntegrationBase, BaseSchema):
 
 
 class MessageBase(BaseModel):
-    user_id: str
-    integration_id: Optional[uuid.UUID] = None
-    start_time: datetime
-    end_time: Optional[datetime] = None
-    latency: Optional[float] = None
-    initial_input: str
-    result: Optional[dict] = None
+    user_id: Optional[str] = Field(
+        None, description="ID of the user who initiated the message"
+    )
+    integration_id: Optional[uuid.UUID] = Field(
+        None, description="ID of the integration used, if any"
+    )
+    start_time: Optional[datetime] = Field(
+        None, description="When the message processing started"
+    )
+    initial_input: str = Field(..., description="The initial input of the message")
+    end_time: Optional[datetime] = Field(
+        None, description="When the message processing completed"
+    )
+    latency: Optional[float] = Field(None, description="Processing time in seconds")
+    result: Optional[dict] = Field(
+        None, description="The processed result of the message"
+    )
 
 
 class MessageCreate(MessageBase):

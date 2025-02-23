@@ -339,6 +339,183 @@
         }
       }
     },
+    "/api/messages/users/{user_id}/conversations": {
+      "post": {
+        "summary": "Create Conversation",
+        "description": "Creates a new conversation for a user.",
+        "operationId": "createConversation",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the user who owns the conversation",
+              "title": "User Id"
+            },
+            "description": "ID of the user who owns the conversation"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/messages/users/{user_id}/chats/{chat_id}": {
+      "post": {
+        "summary": "Update Conversation",
+        "operationId": "updateConversation",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the user",
+              "title": "User Id"
+            },
+            "description": "ID of the user"
+          },
+          {
+            "name": "chat_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the chat",
+              "title": "Chat Id"
+            },
+            "description": "ID of the chat"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateConversationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatCompletion"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/messages/users/{user_id}/chats/{chat_id}/confirm-tool-call": {
+      "post": {
+        "summary": "Confirm Tool Call",
+        "description": "Finalizes a pending write tool call.\nThe user sends updated tool call arguments for verification.\nThis endpoint executes the tool call with the updated arguments and then continues the conversation.",
+        "operationId": "confirmToolCall",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the user",
+              "title": "User Id"
+            },
+            "description": "ID of the user"
+          },
+          {
+            "name": "chat_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "ID of the chat",
+              "title": "Chat Id"
+            },
+            "description": "ID of the chat"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmToolCallRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChatCompletion"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/": {
       "get": {
         "tags": [
@@ -372,6 +549,450 @@
           "none"
         ],
         "title": "AuthType"
+      },
+      "ChatCompletion": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "choices": {
+            "items": {
+              "$ref": "#/components/schemas/Choice"
+            },
+            "type": "array",
+            "title": "Choices"
+          },
+          "created": {
+            "type": "integer",
+            "title": "Created"
+          },
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "object": {
+            "type": "string",
+            "const": "chat.completion",
+            "title": "Object"
+          },
+          "service_tier": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "scale",
+                  "default"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Service Tier"
+          },
+          "system_fingerprint": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "System Fingerprint"
+          },
+          "usage": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CompletionUsage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "id",
+          "choices",
+          "created",
+          "model",
+          "object"
+        ],
+        "title": "ChatCompletion"
+      },
+      "ChatCompletionAudio": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "data": {
+            "type": "string",
+            "title": "Data"
+          },
+          "expires_at": {
+            "type": "integer",
+            "title": "Expires At"
+          },
+          "transcript": {
+            "type": "string",
+            "title": "Transcript"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "id",
+          "data",
+          "expires_at",
+          "transcript"
+        ],
+        "title": "ChatCompletionAudio"
+      },
+      "ChatCompletionMessage": {
+        "properties": {
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "refusal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refusal"
+          },
+          "role": {
+            "type": "string",
+            "const": "assistant",
+            "title": "Role"
+          },
+          "audio": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ChatCompletionAudio"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "function_call": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FunctionCall"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tool_calls": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ChatCompletionMessageToolCall"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tool Calls"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "role"
+        ],
+        "title": "ChatCompletionMessage"
+      },
+      "ChatCompletionMessageToolCall": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "function": {
+            "$ref": "#/components/schemas/Function"
+          },
+          "type": {
+            "type": "string",
+            "const": "function",
+            "title": "Type"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "id",
+          "function",
+          "type"
+        ],
+        "title": "ChatCompletionMessageToolCall"
+      },
+      "ChatCompletionTokenLogprob": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          },
+          "bytes": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bytes"
+          },
+          "logprob": {
+            "type": "number",
+            "title": "Logprob"
+          },
+          "top_logprobs": {
+            "items": {
+              "$ref": "#/components/schemas/TopLogprob"
+            },
+            "type": "array",
+            "title": "Top Logprobs"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "token",
+          "logprob",
+          "top_logprobs"
+        ],
+        "title": "ChatCompletionTokenLogprob"
+      },
+      "Choice": {
+        "properties": {
+          "finish_reason": {
+            "type": "string",
+            "enum": [
+              "stop",
+              "length",
+              "tool_calls",
+              "content_filter",
+              "function_call"
+            ],
+            "title": "Finish Reason"
+          },
+          "index": {
+            "type": "integer",
+            "title": "Index"
+          },
+          "logprobs": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ChoiceLogprobs"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message": {
+            "$ref": "#/components/schemas/ChatCompletionMessage"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "finish_reason",
+          "index",
+          "message"
+        ],
+        "title": "Choice"
+      },
+      "ChoiceLogprobs": {
+        "properties": {
+          "content": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ChatCompletionTokenLogprob"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content"
+          },
+          "refusal": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ChatCompletionTokenLogprob"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refusal"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "title": "ChoiceLogprobs"
+      },
+      "CompletionTokensDetails": {
+        "properties": {
+          "accepted_prediction_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accepted Prediction Tokens"
+          },
+          "audio_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audio Tokens"
+          },
+          "reasoning_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reasoning Tokens"
+          },
+          "rejected_prediction_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rejected Prediction Tokens"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "title": "CompletionTokensDetails"
+      },
+      "CompletionUsage": {
+        "properties": {
+          "completion_tokens": {
+            "type": "integer",
+            "title": "Completion Tokens"
+          },
+          "prompt_tokens": {
+            "type": "integer",
+            "title": "Prompt Tokens"
+          },
+          "total_tokens": {
+            "type": "integer",
+            "title": "Total Tokens"
+          },
+          "completion_tokens_details": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CompletionTokensDetails"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "prompt_tokens_details": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PromptTokensDetails"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "completion_tokens",
+          "prompt_tokens",
+          "total_tokens"
+        ],
+        "title": "CompletionUsage"
+      },
+      "ConfirmToolCallRequest": {
+        "properties": {
+          "tool_hit": {
+            "type": "object",
+            "title": "Tool Hit",
+            "description": "Tool hit data (typically the search hit from Meilisearch) needed to setup the tool client."
+          },
+          "tool_call": {
+            "type": "object",
+            "title": "Tool Call",
+            "description": "Original tool call details with id and tool_name as returned in the verification response."
+          },
+          "updated_arguments": {
+            "type": "object",
+            "title": "Updated Arguments",
+            "description": "Updated tool arguments provided by the user for final execution."
+          },
+          "messages": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Messages",
+            "description": "The conversation messages so far including the pending tool call message."
+          }
+        },
+        "type": "object",
+        "required": [
+          "tool_hit",
+          "tool_call",
+          "updated_arguments",
+          "messages"
+        ],
+        "title": "ConfirmToolCallRequest"
       },
       "DatabaseStatus": {
         "properties": {
@@ -428,6 +1049,44 @@
           "detail"
         ],
         "title": "ErrorResponse"
+      },
+      "Function": {
+        "properties": {
+          "arguments": {
+            "type": "string",
+            "title": "Arguments"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "arguments",
+          "name"
+        ],
+        "title": "Function"
+      },
+      "FunctionCall": {
+        "properties": {
+          "arguments": {
+            "type": "string",
+            "title": "Arguments"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "arguments",
+          "name"
+        ],
+        "title": "FunctionCall"
       },
       "HTTPValidationError": {
         "properties": {
@@ -572,6 +1231,286 @@
           "spec"
         ],
         "title": "IntegrationResponse"
+      },
+      "Message": {
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "deleted": {
+            "type": "boolean",
+            "title": "Deleted",
+            "default": false
+          },
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id",
+            "description": "ID of the user who initiated the message"
+          },
+          "integration_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Integration Id",
+            "description": "ID of the integration used, if any"
+          },
+          "start_time": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Time",
+            "description": "When the message processing started"
+          },
+          "initial_input": {
+            "type": "string",
+            "title": "Initial Input",
+            "description": "The initial input of the message"
+          },
+          "end_time": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Time",
+            "description": "When the message processing completed"
+          },
+          "latency": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency",
+            "description": "Processing time in seconds"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result",
+            "description": "The processed result of the message"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "created_at",
+          "updated_at",
+          "initial_input",
+          "id"
+        ],
+        "title": "Message"
+      },
+      "MessageCreate": {
+        "properties": {
+          "user_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "User Id",
+            "description": "ID of the user who initiated the message"
+          },
+          "integration_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Integration Id",
+            "description": "ID of the integration used, if any"
+          },
+          "start_time": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Time",
+            "description": "When the message processing started"
+          },
+          "initial_input": {
+            "type": "string",
+            "title": "Initial Input",
+            "description": "The initial input of the message"
+          },
+          "end_time": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Time",
+            "description": "When the message processing completed"
+          },
+          "latency": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latency",
+            "description": "Processing time in seconds"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result",
+            "description": "The processed result of the message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "initial_input"
+        ],
+        "title": "MessageCreate"
+      },
+      "PromptTokensDetails": {
+        "properties": {
+          "audio_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audio Tokens"
+          },
+          "cached_tokens": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cached Tokens"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "title": "PromptTokensDetails"
+      },
+      "TopLogprob": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "title": "Token"
+          },
+          "bytes": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "integer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bytes"
+          },
+          "logprob": {
+            "type": "number",
+            "title": "Logprob"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "token",
+          "logprob"
+        ],
+        "title": "TopLogprob"
+      },
+      "UpdateConversationRequest": {
+        "properties": {
+          "messages": {
+            "items": {
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Messages",
+            "description": "List of messages in the conversation"
+          }
+        },
+        "type": "object",
+        "required": [
+          "messages"
+        ],
+        "title": "UpdateConversationRequest"
       },
       "UserCreateRequest": {
         "properties": {

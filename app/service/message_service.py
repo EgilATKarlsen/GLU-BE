@@ -4,12 +4,15 @@ from sqlalchemy import select
 from uuid import UUID
 
 from app.model.db import Message
+from app.model.schema import Message as MessageSchema
 
 
 class MessageService:
     @staticmethod
     async def create(session: AsyncSession, data: Dict[str, Any]) -> Message:
-        message = Message(**data)
+        # Convert Pydantic model to dict if needed
+        data_dict = data.model_dump() if hasattr(data, "model_dump") else data
+        message = Message(**data_dict)
         session.add(message)
         await session.flush()
         await session.refresh(message)
@@ -28,6 +31,22 @@ class MessageService:
             .filter(Message.deleted == False)
         )
         return list(result.scalars().all())
+
+    @staticmethod
+    async def to_schema(message: Message) -> MessageSchema:
+        return MessageSchema(
+            id=message.id,
+            user_id=message.user_id,
+            integration_id=message.integration_id,
+            start_time=message.start_time,
+            end_time=message.end_time,
+            latency=message.latency,
+            initial_input=message.initial_input,
+            result=message.result,
+            created_at=message.created_at,
+            updated_at=message.updated_at,
+            deleted=message.deleted,
+        )
 
     @staticmethod
     async def save(session: AsyncSession, message: Message) -> Message:

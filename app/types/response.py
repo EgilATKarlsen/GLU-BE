@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, EmailStr
 from typing import Optional, Dict, Any, List
 from datetime import datetime
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from app.model.schema import UserIntegration as UserIntegrationSchema
 
@@ -90,3 +90,59 @@ class HealthCheckResponse(BaseModel):
 class ErrorResponse(BaseModel):
     detail: str = Field(..., description="Error message")
     code: Optional[str] = Field(None, description="Error code")
+
+
+class Tool(BaseModel):
+    name: str
+    description: str
+    parameters: dict
+    strict: bool = True
+
+    def to_json(self) -> dict:
+        return self.model_dump()
+
+
+class Function(BaseModel):
+    type: str
+    function: Tool
+
+    def to_json(self) -> dict:
+        # Automatically converts the nested Tool instance by calling its method.
+        data = self.model_dump()
+        data["function"] = self.function.to_json()
+        return data
+
+
+class Function_Attributes(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid4()))
+    name: str
+    method: str
+    path: str
+    tags: list[str]
+    description: str
+    function: Function
+
+    def to_json(self) -> dict:
+        data = self.model_dump()
+        # Convert the nested Function instance
+        data["function"] = self.function.to_json()
+        return data
+
+
+class ConfirmToolCallRequest(BaseModel):
+    tool_hit: dict = Field(
+        ...,
+        description="Tool hit data (typically the search hit from Meilisearch) needed to setup the tool client.",
+    )
+    tool_call: dict = Field(
+        ...,
+        description="Original tool call details with id and tool_name as returned in the verification response.",
+    )
+    updated_arguments: dict = Field(
+        ...,
+        description="Updated tool arguments provided by the user for final execution.",
+    )
+    messages: List[dict] = Field(
+        ...,
+        description="The conversation messages so far including the pending tool call message.",
+    )
