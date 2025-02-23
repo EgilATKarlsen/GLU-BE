@@ -3,6 +3,8 @@ from typing import Optional, Dict, Any, List
 from datetime import datetime
 from uuid import UUID
 
+from app.model.schema import UserIntegration as UserIntegrationSchema
+
 from app.model.db import UserRole, IntegrationCategory, AuthType
 
 
@@ -65,7 +67,7 @@ class UserIntegrationResponse(BaseResponse):
 
 
 class UserIntegrationListResponse(BaseModel):
-    user_integrations: List[UserIntegrationResponse]
+    user_integrations: List[UserIntegrationSchema]
     total: int = Field(..., description="Total number of user integrations")
     page: int = Field(..., description="Current page number")
     pages: int = Field(..., description="Total number of pages")

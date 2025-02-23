@@ -49,9 +49,8 @@ class UserIntegrationService:
         return user_integration
 
     @staticmethod
-    async def to_schema(user_integration: UserIntegration) -> UserIntegrationSchema:
-        # Instead of using awaitable_attrs, we'll just convert the model to a dict
-        # and let Pydantic handle the validation
+    def to_schema(user_integration: UserIntegration) -> UserIntegrationSchema:
+        # Remove the async since this is a synchronous operation
         return UserIntegrationSchema.model_validate(user_integration)
 
     @staticmethod
@@ -59,7 +58,7 @@ class UserIntegrationService:
         session: AsyncSession,
         user_id: str,
         external_accounts: List[ExternalAccount],
-    ) -> List[UserIntegration]:
+    ) -> List[UserIntegrationSchema]:
         try:
             print(external_accounts)
             # Extract provider names from external accounts
@@ -109,10 +108,8 @@ class UserIntegrationService:
                 session, user_id
             )
 
-            # Convert each UserIntegration to schema using asyncio.gather for better performance
-            return await gather(
-                *[UserIntegrationService.to_schema(ui) for ui in user_integrations]
-            )
+            # Since to_schema is now sync, we don't need gather
+            return [UserIntegrationService.to_schema(ui) for ui in user_integrations]
 
         except Exception as e:
             await session.rollback()

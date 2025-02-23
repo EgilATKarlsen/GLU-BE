@@ -606,6 +606,53 @@
         ],
         "title": "UserCreateRequest"
       },
+      "UserIntegration": {
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "deleted": {
+            "type": "boolean",
+            "title": "Deleted",
+            "default": false
+          },
+          "integration_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Integration Id"
+          },
+          "clerk_id": {
+            "type": "string",
+            "title": "Clerk Id"
+          },
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "created_at",
+          "updated_at",
+          "integration_id",
+          "clerk_id",
+          "user_id",
+          "id"
+        ],
+        "title": "UserIntegration"
+      },
       "UserIntegrationCreateRequest": {
         "properties": {
           "integration_id": {
@@ -631,7 +678,7 @@
         "properties": {
           "user_integrations": {
             "items": {
-              "$ref": "#/components/schemas/UserIntegrationResponse"
+              "$ref": "#/components/schemas/UserIntegration"
             },
             "type": "array",
             "title": "User Integrations"

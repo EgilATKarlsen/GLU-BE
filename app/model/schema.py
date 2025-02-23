@@ -46,7 +46,6 @@ class UserCreate(UserBase):
 
 class User(UserBase, BaseSchema):
     id: str
-    integrations: List["UserIntegration"] = []
 
     class Config:
         from_attributes = True
@@ -72,7 +71,6 @@ class IntegrationCreate(IntegrationBase):
 
 class Integration(IntegrationBase, BaseSchema):
     id: uuid.UUID
-    user_integrations: List["UserIntegration"] = []
 
     class Config:
         from_attributes = True
@@ -90,8 +88,6 @@ class UserIntegrationCreate(UserIntegrationBase):
 
 class UserIntegration(UserIntegrationBase, BaseSchema):
     id: uuid.UUID
-    integration: Integration
-    user: User
 
     class Config:
         from_attributes = True
@@ -113,15 +109,6 @@ class MessageCreate(MessageBase):
 
 class Message(MessageBase, BaseSchema):
     id: uuid.UUID
-    user: User
-    integration: Optional[UserIntegration] = None
 
     class Config:
         from_attributes = True
-
-
-# Resolve forward references
-User.model_rebuild()
-Integration.model_rebuild()
-UserIntegration.model_rebuild()
-Message.model_rebuild()
