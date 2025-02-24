@@ -38,7 +38,7 @@ class MeilisearchManager:
         """
         if self._client:
             try:
-                await self._client.close()
+                await self._client.aclose()
             except AttributeError:
                 # If the client does not support closing, ignore this.
                 pass
